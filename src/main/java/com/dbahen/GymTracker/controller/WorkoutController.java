@@ -4,7 +4,9 @@ import jakarta.validation.Valid;
 import com.dbahen.GymTracker.model.Workout;
 import com.dbahen.GymTracker.service.WorkoutService;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
 
+import javax.smartcardio.ResponseAPDU;
 import java.util.List;
 
 @RestController
@@ -27,24 +29,24 @@ public class WorkoutController {
     }
 
     @DeleteMapping("/{id}")
-    public String deleteWorkout(@PathVariable Long id) {
+    public ResponseEntity<String> deleteWorkout(@PathVariable Long id) {
         boolean deleted = workoutService.deleteWorkoutById(id);
 
         if (deleted) {
-            return "Workout deleted";
+            return ResponseEntity.ok("Workout deleted");
         } else {
-            return "Workout not found";
+            return ResponseEntity.notFound().build();
         }
     }
 
     @PutMapping("/{id}")
-    public String updateWorkout(@PathVariable Long id, @RequestBody Workout workout) {
+    public ResponseEntity<String> updateWorkout(@PathVariable Long id, @RequestBody Workout workout) {
         boolean updated = workoutService.updateWorkout(id, workout);
 
         if (updated) {
-            return "Workout updated";
+            return ResponseEntity.ok("Workout updated");
         } else {
-            return "Workout not found";
+            return ResponseEntity.notFound().build();
         }
     }
 
