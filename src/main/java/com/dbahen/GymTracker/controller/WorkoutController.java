@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
 import javax.smartcardio.ResponseAPDU;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -21,6 +22,11 @@ public class WorkoutController {
     @GetMapping
     public List<Workout> getAllWorkouts() {
         return workoutService.getWorkouts();
+    }
+
+    @GetMapping("/fecha/{fecha}")
+    public List<Workout> getWorkoutsByDate(@PathVariable LocalDate fecha){
+        return workoutService.getWorkoutsByDate(fecha);
     }
 
     @PostMapping

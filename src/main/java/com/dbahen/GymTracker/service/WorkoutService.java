@@ -3,6 +3,7 @@ package com.dbahen.GymTracker.service;
 import com.dbahen.GymTracker.model.Workout;
 import com.dbahen.GymTracker.repository.WorkoutRepository;
 import org.springframework.stereotype.Service;
+import java.time.LocalDate;
 
 import java.util.List;
 
@@ -17,6 +18,10 @@ public class WorkoutService {
 
     public List<Workout> getWorkouts() {
         return workoutRepository.findAll();
+    }
+
+    public List<Workout> getWorkoutsByDate(LocalDate date) {
+        return workoutRepository.findByDate(date);
     }
 
     public Workout addWorkout(Workout workout) {
