@@ -3,6 +3,8 @@ package com.dbahen.GymTracker.model;
 import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
 import jakarta.persistence.*;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -13,8 +15,8 @@ public class Workout {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
-    private String date;
+    @NotNull
+    private LocalDate date;
 
     @Valid
     @NotNull
@@ -29,7 +31,7 @@ public class Workout {
     //Empty Constructor for JSON
     public Workout() {}
 
-    public Workout(String date, Exercise exercise) {
+        public Workout(LocalDate date, Exercise exercise) {
         this.date = date;
         this.exercise = exercise;
     }
@@ -38,7 +40,7 @@ public class Workout {
         return id;
     }
 
-    public String getDate() {
+    public LocalDate getDate() {
         return date;
     }
     public Exercise getExercise() {
@@ -52,7 +54,7 @@ public class Workout {
         this.id = id;
     }
 
-    public void setDate(String date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 
