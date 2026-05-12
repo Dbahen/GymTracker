@@ -13,7 +13,7 @@ public class SetEntry {
     @Min(1)
     private int reps;
 
-    @Min(1)
+    @Min(0)
     private int weight;
 
     public SetEntry() {}
