@@ -111,6 +111,8 @@ src/main/java/com/dbahen/GymTracker/
 └── GymTrackerApplication.java
 ```
 
+# 🌐 URL en producción: https://gymtracker-production-339b.up.railway.app
+
 ## 👨‍💻 Autor
 
 Diego Bahen — [GitHub](https://github.com/Dbahen)
