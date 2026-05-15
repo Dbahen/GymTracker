@@ -2,18 +2,24 @@
 
 REST API para registrar y gestionar entrenamientos de gimnasio. Permite llevar un historial de workouts, ejercicios y sets con su peso y repeticiones.
 
+## 🌐 URL en producción
+```
+https://gymtracker-production-339b.up.railway.app
+```
+
 ## 🛠 Tecnologías
 
-- Java 22
+- Java 21
 - Spring Boot 4
+- Spring Security + JWT
 - Spring Data JPA
-- H2 Database (persistencia en archivo local)
+- PostgreSQL (Supabase)
 - Maven
 
 ## 🚀 Cómo correr el proyecto localmente
 
 ### Requisitos
-- Java 22 o superior
+- Java 21 o superior
 - Maven
 
 ### Pasos
@@ -31,87 +37,130 @@ cd GymTracker
 
 La app levanta en `http://localhost:8080`
 
-## 📋 Endpoints
+## 🔐 Autenticación
 
-### Workouts
+La API usa JWT. Para acceder a los endpoints protegidos debes:
 
-| Método | Endpoint | Descripción |
-|--------|----------|-------------|
-| GET | `/workouts` | Obtener todos los workouts |
-| GET | `/workouts/fecha/{fecha}` | Obtener workouts por fecha |
-| POST | `/workouts` | Crear un nuevo workout |
-| PUT | `/workouts/{id}` | Actualizar un workout |
-| DELETE | `/workouts/{id}` | Eliminar un workout |
+1. Registrarte o iniciar sesión para obtener un token
+2. Incluir el token en cada request en el header:
+```
+Authorization: Bearer <tu_token>
+```
 
-## 📦 Ejemplos de uso
-
-### Crear un workout — POST /workouts
+### Registro — POST /auth/register
 
 ```json
 {
+  "email": "usuario@gmail.com",
+  "password": "MiPassword123"
+}
+```
+
+Respuesta:
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiJ9..."
+}
+```
+
+### Login — POST /auth/login
+
+```json
+{
+  "email": "usuario@gmail.com",
+  "password": "MiPassword123"
+}
+```
+
+Respuesta:
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiJ9..."
+}
+```
+
+## 📋 Endpoints
+
+Todos los endpoints excepto `/auth/**` requieren el header `Authorization: Bearer <token>`.
+
+### Autenticación
+
+| Método | Endpoint | Descripción | Auth |
+|--------|----------|-------------|------|
+| POST | `/auth/register` | Registrar nuevo usuario | No |
+| POST | `/auth/login` | Iniciar sesión | No |
+
+### Workouts
+
+| Método | Endpoint | Descripción | Auth |
+|--------|----------|-------------|------|
+| GET | `/workouts` | Obtener todos los workouts | Sí |
+| GET | `/workouts/fecha/{fecha}` | Obtener workouts por fecha | Sí |
+| POST | `/workouts` | Crear un nuevo workout | Sí |
+| PUT | `/workouts/{id}` | Actualizar un workout | Sí |
+| DELETE | `/workouts/{id}` | Eliminar un workout | Sí |
+
+## 📦 Ejemplo de uso completo
+
+### 1. Login
+```bash
+POST /auth/login
+{
+  "email": "usuario@gmail.com",
+  "password": "MiPassword123"
+}
+```
+
+### 2. Crear workout con el token
+```bash
+POST /workouts
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9...
+
+{
   "date": "2025-01-15",
   "exercise": {
-    "name": "Peso Muerto",
-    "muscleGroup": "Espalda"
+    "name": "Press Banca",
+    "muscleGroup": "Pecho"
   },
   "sets": [
-    {
-      "reps": 5,
-      "weight": 140.0
-    },
-    {
-      "reps": 5,
-      "weight": 140.0
-    },
-    {
-      "reps": 3,
-      "weight": 150.0
-    }
+    { "reps": 8, "weight": 80.0 },
+    { "reps": 8, "weight": 80.0 },
+    { "reps": 6, "weight": 85.0 }
   ]
 }
 ```
 
-### Obtener workouts por fecha — GET /workouts/fecha/2025-01-15
-
-```json
-[
-  {
-    "id": 1,
-    "date": "2025-01-15",
-    "exercise": {
-      "id": 1,
-      "name": "Peso Muerto",
-      "muscleGroup": "Espalda"
-    },
-    "sets": [
-      { "id": 1, "reps": 5, "weight": 140.0 },
-      { "id": 2, "reps": 5, "weight": 140.0 },
-      { "id": 3, "reps": 3, "weight": 150.0 }
-    ]
-  }
-]
+### 3. Obtener workouts por fecha
+```bash
+GET /workouts/fecha/2025-01-15
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9...
 ```
 
 ## 🏗 Estructura del proyecto
 
 ```
 src/main/java/com/dbahen/GymTracker/
+├── config/
+│   └── SecurityConfig.java           # JWT filter y configuración de seguridad
 ├── controller/
-│   └── WorkoutController.java    # Endpoints HTTP
+│   ├── AuthController.java           # Endpoints de autenticación
+│   └── WorkoutController.java        # Endpoints de workouts
 ├── service/
-│   └── WorkoutService.java       # Lógica de negocio
+│   ├── JwtService.java               # Generación y validación de tokens
+│   ├── UserService.java              # Lógica de registro y login
+│   └── WorkoutService.java           # Lógica de negocio
 ├── repository/
-│   └── WorkoutRepository.java    # Acceso a base de datos
+│   ├── UserRepository.java           # Acceso a tabla users
+│   └── WorkoutRepository.java        # Acceso a tabla workouts
 ├── model/
-│   ├── Workout.java              # Entidad principal
-│   ├── Exercise.java             # Ejercicio
-│   └── SetEntry.java             # Set (reps + peso)
+│   ├── User.java                     # Entidad usuario
+│   ├── Workout.java                  # Entidad workout
+│   ├── Exercise.java                 # Entidad ejercicio
+│   └── SetEntry.java                 # Entidad set (reps + peso)
 ├── exception/
-│   └── GlobalExceptionHandler.java
+│   └── GlobalExceptionHandler.java   # Manejo global de errores
 └── GymTrackerApplication.java
 ```
-
-# 🌐 URL en producción: https://gymtracker-production-339b.up.railway.app
 
 ## 👨‍💻 Autor
 
