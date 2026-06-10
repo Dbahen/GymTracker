@@ -1,6 +1,6 @@
 # 💪 GymTracker API
 
-REST API para registrar y gestionar entrenamientos de gimnasio. Permite llevar un historial de workouts, ejercicios y sets con su peso y repeticiones.
+REST API para registrar y gestionar entrenamientos de gimnasio. Cada usuario tiene su propio historial de workouts, ejercicios y sets con su peso y repeticiones.
 
 ## 🌐 URL en producción
 ```
@@ -12,7 +12,7 @@ https://gymtracker-production-339b.up.railway.app
 - Java 21
 - Spring Boot 4
 - Spring Security + JWT
-- Spring Data JPA
+- Spring Data JPA / Hibernate
 - PostgreSQL (Supabase)
 - Maven
 
@@ -35,7 +35,7 @@ cd GymTracker
 ./mvnw spring-boot:run -DskipTests
 ```
 
-La app levanta en `http://localhost:8080`
+La app levanta en `http://localhost:8080` usando H2 (base de datos en memoria).
 
 ## 🔐 Autenticación
 
@@ -46,6 +46,8 @@ La API usa JWT. Para acceder a los endpoints protegidos debes:
 ```
 Authorization: Bearer <tu_token>
 ```
+
+Los tokens expiran después de 24 horas.
 
 ### Registro — POST /auth/register
 
@@ -81,7 +83,7 @@ Respuesta:
 
 ## 📋 Endpoints
 
-Todos los endpoints excepto `/auth/**` requieren el header `Authorization: Bearer <token>`.
+Todos los endpoints excepto `/auth/**` requieren el header `Authorization: Bearer <token>`. Cada usuario solo puede ver y modificar sus propios workouts.
 
 ### Autenticación
 
@@ -94,7 +96,7 @@ Todos los endpoints excepto `/auth/**` requieren el header `Authorization: Beare
 
 | Método | Endpoint | Descripción | Auth |
 |--------|----------|-------------|------|
-| GET | `/workouts` | Obtener todos los workouts | Sí |
+| GET | `/workouts` | Obtener todos los workouts del usuario | Sí |
 | GET | `/workouts/fecha/{fecha}` | Obtener workouts por fecha | Sí |
 | POST | `/workouts` | Crear un nuevo workout | Sí |
 | PUT | `/workouts/{id}` | Actualizar un workout | Sí |
@@ -102,9 +104,9 @@ Todos los endpoints excepto `/auth/**` requieren el header `Authorization: Beare
 
 ## 📦 Ejemplo de uso completo
 
-### 1. Login
+### 1. Registro
 ```bash
-POST /auth/login
+POST /auth/register
 {
   "email": "usuario@gmail.com",
   "password": "MiPassword123"
@@ -117,22 +119,22 @@ POST /workouts
 Authorization: Bearer eyJhbGciOiJIUzI1NiJ9...
 
 {
-  "date": "2025-01-15",
+  "date": "2025-06-09",
   "exercise": {
-    "name": "Press Banca",
-    "muscleGroup": "Pecho"
+    "name": "Sentadilla",
+    "muscleGroup": "Piernas"
   },
   "sets": [
-    { "reps": 8, "weight": 80.0 },
-    { "reps": 8, "weight": 80.0 },
-    { "reps": 6, "weight": 85.0 }
+    { "reps": 5, "weight": 120.0 },
+    { "reps": 5, "weight": 120.0 },
+    { "reps": 5, "weight": 125.0 }
   ]
 }
 ```
 
 ### 3. Obtener workouts por fecha
 ```bash
-GET /workouts/fecha/2025-01-15
+GET /workouts/fecha/2025-06-09
 Authorization: Bearer eyJhbGciOiJIUzI1NiJ9...
 ```
 
