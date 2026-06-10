@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.security.Key;
 import java.util.Date;
@@ -12,7 +13,8 @@ import java.util.Date;
 @Service
 public class JwtService {
 
-    private static final String SECRET_KEY = "miClaveSecretaSuperSeguraParaJWTGymTracker2025";
+    @Value("${jwt.secret}")
+    private String SECRET_KEY;
     private static final long EXPIRATION_TIME = 86400000; //24HRS en milisegundos
 
     private Key getSigningKey() {
