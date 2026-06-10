@@ -23,6 +23,10 @@ public class Workout {
     @ManyToOne(cascade = CascadeType.ALL)
     private Exercise exercise;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @Valid
     @NotEmpty
     @OneToMany(cascade = CascadeType.ALL)
@@ -49,6 +53,9 @@ public class Workout {
     public List<SetEntry> getSets() {
         return sets;
     }
+
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
 
     public void setId(Long id) {
         this.id = id;
