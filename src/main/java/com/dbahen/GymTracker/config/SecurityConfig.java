@@ -34,7 +34,11 @@ public class SecurityConfig {
         http
                 .cors(cors -> cors.configurationSource(request -> {
                     var config = new org.springframework.web.cors.CorsConfiguration();
-                    config.setAllowedOrigins(java.util.List.of("http://localhost:5173", "https://gymtracker-production-339b.up.railway.app"));
+                    config.setAllowedOrigins(java.util.List.of(
+                            "http://localhost:5173",
+                            "https://gymtracker-production-339b.up.railway.app",
+                            "https://gymtracker-frontend-six.vercel.app"
+                            ));
                     config.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                     config.setAllowedHeaders(java.util.List.of("*"));
                     config.setAllowCredentials(true);
