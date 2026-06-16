@@ -16,7 +16,7 @@ public class EmailService {
         Resend resend = new Resend(resendApiKey);
 
         CreateEmailOptions params = CreateEmailOptions.builder()
-                .from("GymTracker <onboarding@resend.dev")
+                .from("onboarding@resend.dev")
                 .to(toEmail)
                 .subject("Restablecer contraseña - GymTracker")
                 .html("<h2>Restablecer contraseña</h2>" +
